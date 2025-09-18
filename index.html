@@ -828,8 +828,8 @@
         z-index: 2;
     }
 
-    .poster-title {
-        font-size: 1.6em;
+   .poster-title {
+        font-size: 2em;
         text-transform: uppercase;
         font-weight: 700;
         text-shadow: 3px 3px 5px rgba(0,0,0,0.5);
@@ -837,14 +837,14 @@
     }
 
     .poster-datetime {
-        font-size: 0.7em;
+        font-size: 1.1em;
         font-weight: bold;
         margin-top: -0.1rem;
         color: #ffeb3b;
     }
 
     .poster-tagline {
-        font-size: 0.9em;
+        font-size: 1em;
         margin: -0.1rem 0;
     }
 
@@ -867,13 +867,13 @@
     .prize-list {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1 1rem;
+        gap: 1rem;
         text-align: left;
     }
 
     .prize-column p {
         margin: 0.5rem 0;
-        font-size: 1.1em;
+        font-size: 1.2em;
     }
 
     #prize-amounts {
@@ -882,7 +882,7 @@
     }
 
     .ticket-details {
-        font-size: 0.6em;
+        font-size: 0.9em;
         font-weight: bold;
         background: #ffeb3b;
         color: #000;
@@ -1005,6 +1005,99 @@
         min-width: 35px;
         border-width: 1px;
         line-height: 35px;
+    }
+    
+    /* --- Poster Maker Styles --- */
+    #poster-bg-controls {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        padding: 8px;
+        margin-bottom: 1rem;
+        background-color: rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid var(--secondary-bg-dash);
+    }
+
+    #poster-bg-controls::-webkit-scrollbar {
+        height: 5px;
+    }
+    #poster-bg-controls::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    #poster-bg-controls::-webkit-scrollbar-thumb {
+        background: var(--accent-color-dash);
+        border-radius: 5px;
+    }
+    #poster-bg-controls::-webkit-scrollbar-thumb:hover {
+        background: #1fe0b8;
+    }
+
+    #poster-bg-controls > .actionBtn,
+    #poster-bg-controls > span,
+    #poster-bg-controls > label.actionBtn {
+        flex-shrink: 0;
+        margin: 0 !important;
+        transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        padding: 6px 12px;
+        font-size: 0.85em;
+        height: auto;
+    }
+
+    #poster-bg-controls > span {
+        align-self: center;
+        font-weight: 600;
+        color: var(--light-text-dash);
+    }
+
+    #poster-bg-controls > .actionBtn:hover,
+    #poster-bg-controls > label.actionBtn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    #poster-bg-controls > .actionBtn.active {
+        background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+        color: var(--text-dark);
+        font-weight: 700;
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 0 12px var(--accent-primary);
+        border-color: var(--light-text-dash);
+    }
+    
+    #poster-bg-controls label.actionBtn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .poster-actions {
+        display: flex;
+        justify-content: space-around;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid var(--muted-color-dash);
+        margin-top: 15px;
+    }
+
+    .poster-actions .actionBtn {
+        flex-grow: 1;
+        font-size: 1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .poster-actions .actionBtn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
 </style>
 </head>
@@ -1425,43 +1518,46 @@
         <button class="x-button" onclick="closePopups()"><i class="fas fa-times"></i></button>
         <h3 class="popup-title" style="color: var(--light-text-dash);">Game Poster Generator</h3>
         
-        <div id="poster-bg-controls" 
-     style="text-align: center; margin-bottom: 10px; display: flex; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; gap: 5px; padding-bottom: 5px;">
-    <span style="color: var(--light-text-dash); font-size: 0.9em; margin-right: 10px; align-self: center; flex: 0 0 auto;">Change BG:</span>
-    
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg1.jpeg')">BG 1</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg2.jpeg')">BG 2</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg3.jpeg')">BG 3</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg4.jpeg')">BG 4</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg5.jpeg')">BG 5</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg6.jpeg')">BG 6</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg7.jpeg')">BG 7</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg8.jpeg')">BG 8</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg9.jpeg')">BG 9</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg10.jpeg')">BG 10</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg11.jpg')">BG 11</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg12.jpg')">BG 12</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg13.jpg')">BG 13</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg14.jpg')">BG 14</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg15.jpg')">BG 15</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg16.jpg')">BG 16</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg17.jpg')">BG 17</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg18.jpg')">BG 18</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg19.jpg')">BG 19</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg20.jpg')">BG 20</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg21.jpg')">BG 21</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg22.jpg')">BG 22</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg23.jpg')">BG 23</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg24.jpg')">BG 24</button>
-    <button class="actionBtn" style="padding: 4px 8px; font-size: 0.8em; flex: 0 0 auto;" onclick="changePosterBackground('https://raw.githubusercontent.com/Anandkhuman/housie/main/bg25.jpg')">BG 25</button>
-</div>
+        <div id="poster-bg-controls">
+            <span>Change BG:</span>
+            <label for="bg-upload" class="actionBtn">
+                <i class="fas fa-upload"></i> Upload
+            </label>
+            <input type="file" id="bg-upload" accept="image/*" style="display: none;">
+            
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg1.jpeg')">BG 1</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg2.jpeg')">BG 2</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg3.jpeg')">BG 3</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg4.jpeg')">BG 4</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg5.jpeg')">BG 5</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg6.jpeg')">BG 6</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg7.jpeg')">BG 7</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg8.jpeg')">BG 8</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg9.jpeg')">BG 9</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg10.jpeg')">BG 10</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg11.jpg')">BG 11</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg12.jpg')">BG 12</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg13.jpg')">BG 13</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg14.jpg')">BG 14</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg15.jpg')">BG 15</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg16.jpg')">BG 16</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg17.jpg')">BG 17</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg18.jpg')">BG 18</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg19.jpg')">BG 19</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg20.jpg')">BG 20</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg21.jpg')">BG 21</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg22.jpg')">BG 22</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg23.jpg')">BG 23</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg24.jpg')">BG 24</button>
+            <button class="actionBtn" onclick="changePosterBackground(this, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg25.jpg')">BG 25</button>
+        </div>
 
 
         <div id="posterContent">
         </div>
 
-        <div class="poster-actions" style="display: flex; justify-content: space-around; padding: 15px 0 5px 0; border-top: 1px solid var(--muted-color-dash); margin-top: 15px;">
-            <button class="actionBtn" id="savePosterBtn" onclick="savePosterAsImage()"><i class="fas fa-download"></i> Save as Image</button>
+        <div class="poster-actions">
+            <button class="actionBtn" id="savePosterBtn" onclick="savePosterAsImage()"><i class="fas fa-download"></i> Save as File</button>
             <button class="actionBtn" id="sharePosterBtn" onclick="sharePoster()"><i class="fas fa-share-alt"></i> Share</button>
         </div>
     </div>
@@ -1772,6 +1868,7 @@ function bindEventListeners() {
         document.getElementById('adminTicketDisplayArea').innerHTML = '';
         adminDisplayedSearchPhones.clear();
     });
+    document.getElementById('bg-upload').addEventListener('change', handlePosterBgUpload);
 }
 
 function showPopup(id) {
@@ -3172,17 +3269,36 @@ async function deleteUser(uid, name) {
     }
 }
 
-function changePosterBackground(source) {
+function changePosterBackground(buttonElement, source) {
+    const bgButtons = document.querySelectorAll('#poster-bg-controls .actionBtn');
+    bgButtons.forEach(btn => btn.classList.remove('active'));
+
+    if (buttonElement) {
+        buttonElement.classList.add('active');
+    }
+    
     const posterContent = document.getElementById('posterContent');
     if (posterContent) {
         let newImageUrl;
-        if (source.startsWith('http')) {
+        if (source.startsWith('http') || source.startsWith('data:image')) {
             newImageUrl = source;
         } else {
             newImageUrl = `https://source.unsplash.com/random/600x800/?${source}&t=${new Date().getTime()}`;
         }
         posterContent.style.backgroundImage = `url('${newImageUrl}')`;
-        showNotification('Poster background updated!', 'info', 2000);
+    }
+}
+
+function handlePosterBgUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            changePosterBackground(null, e.target.result);
+        };
+        reader.readAsDataURL(file);
+    } else if (file) {
+        showNotification('Please select a valid image file (e.g., JPG, PNG, GIF).', 'error');
     }
 }
 
@@ -3232,7 +3348,12 @@ function showPosterModal() {
 
     document.getElementById('posterContent').innerHTML = posterHTML;
     
-    changePosterBackground('party,confetti');
+    const firstBgButton = document.querySelector('#poster-bg-controls .actionBtn[onclick]');
+    if (firstBgButton) {
+      firstBgButton.click();
+    } else {
+      changePosterBackground(null, 'https://raw.githubusercontent.com/Anandkhuman/housie/main/bg1.jpeg');
+    }
     
     showPopup('posterMakerPopup');
 }
