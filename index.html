@@ -2913,6 +2913,7 @@ function showLoginForm() { document.getElementById('loginForm').style.display = 
 function showSignupForm() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('signupForm').style.display = 'block'; }
 
 function showAgentListPopup() {
+    const defaultAgentUid = gameSettingsData.defaultBookingAgentUid;
     const container = document.getElementById('agentListContainer');
     container.innerHTML = '';
     const agents = allUsersData.filter(u => u.role === 'admin' || u.role === 'agent').sort((a, b) => {
@@ -2925,7 +2926,11 @@ function showAgentListPopup() {
             const link = document.createElement('a');
             link.href = `https://wa.me/${agent.phone.replace(/\D/g, '')}`;
             link.target = '_blank';
-            link.innerHTML = `${agent.name}<i class="fab fa-whatsapp"></i>`;
+            let badge = '';
+            if(agent.uid === defaultAgentUid) {
+                badge = `<span style="background-color: #f1c40f; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; margin-left: 10px;">DEFAULT</span>`;
+            }
+            link.innerHTML = `${agent.name}${badge}<i class="fab fa-whatsapp"></i>`;
             container.appendChild(link);
         });
     } else { container.innerHTML = '<p>No agents available.</p>'; }
@@ -3541,6 +3546,19 @@ function handlePublicBookingRequest() {
 }
 
 async function openAgentSelectorForWhatsApp(userName, userPhone, selectedTickets) {
+    const defaultAgentUid = gameSettingsData.defaultBookingAgentUid;
+    let defaultAgent = null;
+
+    if (defaultAgentUid) {
+        defaultAgent = allUsersData.find(u => u.uid === defaultAgentUid && (u.role === 'admin' || u.role === 'agent'));
+    }
+
+    if (defaultAgent) {
+        // Automatically route to default agent
+        await redirectToWhatsApp(defaultAgent.phone, userName, userPhone, selectedTickets);
+        return;
+    }
+
     const container = document.getElementById('bookingAgentListContainer');
     container.innerHTML = '';
     const agents = allUsersData.filter(u => u.role === 'admin' || u.role === 'agent').sort((a, b) => {
@@ -4662,6 +4680,9 @@ async function resetAgent() {
 
         agents.forEach(agent => {
           updates[`/users/${agent.uid}`] = null;
+          if (gameSettingsData.defaultBookingAgentUid === agent.uid) {
+              updates[`settings/gameConfig/defaultBookingAgentUid`] = null;
+          }
         });
         await db.ref().update(updates);
 
@@ -4759,6 +4780,14 @@ function toggleAdminList(state) {
     updateAdminList();
 }
 
+async function setDefaultBookingAgent(uid) {
+    try {
+        await db.ref('settings/gameConfig/defaultBookingAgentUid').set(uid);
+        showNotification('Default booking agent updated.', 'success');
+    } catch (e) {
+        showNotification('Error updating default agent: ' + e.message, 'error');
+    }
+}
 function updateAdminList() {
     if (currentView !== 'adminDashboardView') return;
     const searchTerm = document.getElementById('adminSearchKeyInp').value.toLowerCase();
@@ -4799,6 +4828,8 @@ function updateAdminList() {
     } else {
         table.className = 'gameSettingTable1 agent-list-view';
         const commissionPerTicket = gameSettingsData.agentCommission || 0;
+        const defaultAgentUid = gameSettingsData.defaultBookingAgentUid || null;
+        
         const users = allUsersData.filter(u => !searchTerm || (u.name||'').toLowerCase().includes(searchTerm) || (u.email||'').toLowerCase().includes(searchTerm) || String(u.phone||'').toLowerCase().includes(searchTerm)); 
         
         const tableHTML = users.map(u => {
@@ -4812,11 +4843,18 @@ function updateAdminList() {
                 ? `<button class="actionBtn" style="background-color: #e74c3c;" onclick="event.stopPropagation(); deleteUser('${u.uid}', '${safeName}')"><i class="fas fa-trash-alt"></i> Delete</button>` 
                 : '';
 
+            const isDefault = u.uid === defaultAgentUid;
+            const defaultBtnHTML = isDefault
+                ? `<button class="actionBtn" style="background-color: #f1c40f; color: #000;" onclick="event.stopPropagation(); setDefaultBookingAgent(null)"><i class="fas fa-star"></i> Clear Receiver</button>`
+                : `<button class="actionBtn" style="background-color: #95a5a6;" onclick="event.stopPropagation(); setDefaultBookingAgent('${u.uid}')"><i class="far fa-star"></i> Set Receiver</button>`;
+
+            const defaultBadge = isDefault ? `<span style="background-color: #f1c40f; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; margin-left: 10px;">DEFAULT RECEIVER</span>` : '';
+
             return `<tr class="agent-row-card" onclick="toggleAgentCardActions('${u.uid}')" title="Click to show actions for ${safeName}">
                 <td colspan="5">
                     <div class="agent-card-container">
                         <div class="agent-card-info">
-                            <div class="agent-card-name">${u.name || 'N/A'} <small style="text-transform:uppercase; font-size:0.75rem; color:var(--accent-color-dash);">(${u.role})</small></div>
+                            <div class="agent-card-name">${u.name || 'N/A'} <small style="text-transform:uppercase; font-size:0.75rem; color:var(--accent-color-dash);">(${u.role})</small> ${defaultBadge}</div>
                             <div class="agent-card-phone"><i class="fas fa-phone-alt"></i> ${u.phone || 'N/A'}</div>
                         </div>
                         <div class="agent-card-stats">
@@ -4830,9 +4868,10 @@ function updateAdminList() {
                             </div>
                         </div>
                     </div>
-                    <div class="agent-card-actions-sub" id="agent-actions-${u.uid}" style="display: none; justify-content: flex-end; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div class="agent-card-actions-sub" id="agent-actions-${u.uid}" style="display: none; justify-content: flex-end; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap;">
                         <button class="actionBtn" style="background-color: #2980b9;" onclick="event.stopPropagation(); showAgentBookings('${u.uid}', '${safeName}')"><i class="fas fa-eye"></i> View Tickets</button>
                         <button class="actionBtn" style="background-color: #e67e22;" onclick="event.stopPropagation(); showEditAgentPopup('${u.uid}', '${safeName}', '${safePhone}', '${safeRole}')"><i class="fas fa-edit"></i> Edit</button>
+                        ${defaultBtnHTML}
                         ${deleteBtnHTML}
                     </div>
                 </td>
@@ -5018,6 +5057,9 @@ async function deleteUser(uid, name) {
 
     try {
         await db.ref(`users/${uid}`).remove();
+        if(gameSettingsData.defaultBookingAgentUid === uid) {
+            await db.ref('settings/gameConfig/defaultBookingAgentUid').remove();
+        }
         const msg = `User '${name}' has been deleted.`;
         showNotification(msg, 'success');
     } catch (e) {
